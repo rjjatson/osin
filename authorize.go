@@ -109,8 +109,7 @@ func (s *Server) HandleAuthorizeRequest(w *Response, r *http.Request) *Authorize
 	// create the authorization request
 	unescapedUri, err := url.QueryUnescape(r.Form.Get("redirect_uri"))
 	if err != nil {
-		w.SetErrorState(E_INVALID_REQUEST, "", "")
-		w.InternalError = err
+		w.SetErrorState(E_INVALID_REQUEST, "unable to unescape redirect_uri", "")
 		return nil
 	}
 
@@ -125,16 +124,16 @@ func (s *Server) HandleAuthorizeRequest(w *Response, r *http.Request) *Authorize
 	// must have a valid client
 	ret.Client, err = w.Storage.GetClient(r.Form.Get("client_id"))
 	if err != nil {
-		w.SetErrorState(E_SERVER_ERROR, "", ret.State)
+		w.SetErrorState(E_SERVER_ERROR, "unable to get client", ret.State)
 		w.InternalError = err
 		return nil
 	}
 	if ret.Client == nil {
-		w.SetErrorState(E_UNAUTHORIZED_CLIENT, "", ret.State)
+		w.SetErrorState(E_UNAUTHORIZED_CLIENT, "client not found", ret.State)
 		return nil
 	}
 	if ret.Client.GetRedirectUri() == "" {
-		w.SetErrorState(E_UNAUTHORIZED_CLIENT, "", ret.State)
+		w.SetErrorState(E_UNAUTHORIZED_CLIENT, "client redirect URI not found", ret.State)
 		return nil
 	}
 
@@ -145,7 +144,7 @@ func (s *Server) HandleAuthorizeRequest(w *Response, r *http.Request) *Authorize
 	}
 
 	if err = ValidateUriList(ret.Client.GetRedirectUri(), ret.RedirectUri, s.Config.RedirectUriSeparator); err != nil {
-		w.SetErrorState(E_INVALID_REQUEST, "", ret.State)
+		w.SetErrorState(E_INVALID_REQUEST, "redirect URI invalid", ret.State)
 		return nil
 	}
 

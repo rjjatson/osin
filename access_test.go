@@ -279,9 +279,9 @@ type clientWithoutMatcher struct {
 	RedirectUri string
 }
 
-func (c *clientWithoutMatcher) GetId() string            { return c.Id }
+func (c *clientWithoutMatcher) GetID() string            { return c.Id }
 func (c *clientWithoutMatcher) GetSecret() string        { return c.Secret }
-func (c *clientWithoutMatcher) GetRedirectUri() string   { return c.RedirectUri }
+func (c *clientWithoutMatcher) GetRedirectURI() string   { return c.RedirectUri }
 func (c *clientWithoutMatcher) GetUserData() interface{} { return nil }
 
 func TestGetClientWithoutMatcher(t *testing.T) {
@@ -326,9 +326,9 @@ type clientWithMatcher struct {
 	RedirectUri string
 }
 
-func (c *clientWithMatcher) GetId() string            { return c.Id }
+func (c *clientWithMatcher) GetID() string            { return c.Id }
 func (c *clientWithMatcher) GetSecret() string        { panic("called GetSecret"); return "" }
-func (c *clientWithMatcher) GetRedirectUri() string   { return c.RedirectUri }
+func (c *clientWithMatcher) GetRedirectURI() string   { return c.RedirectUri }
 func (c *clientWithMatcher) GetUserData() interface{} { return nil }
 func (c *clientWithMatcher) ClientSecretMatches(secret string) bool {
 	return secret == c.Secret

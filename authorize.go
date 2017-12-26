@@ -132,18 +132,18 @@ func (s *Server) HandleAuthorizeRequest(w *Response, r *http.Request) *Authorize
 		w.SetErrorState(E_UNAUTHORIZED_CLIENT, "client not found", ret.State)
 		return nil
 	}
-	if ret.Client.GetRedirectUri() == "" {
+	if ret.Client.GetRedirectURI() == "" {
 		w.SetErrorState(E_UNAUTHORIZED_CLIENT, "client redirect URI not found", ret.State)
 		return nil
 	}
 
 	// check redirect uri, if there are multiple client redirect uri's
 	// don't set the uri
-	if ret.RedirectUri == "" && FirstUri(ret.Client.GetRedirectUri(), s.Config.RedirectUriSeparator) == ret.Client.GetRedirectUri() {
-		ret.RedirectUri = FirstUri(ret.Client.GetRedirectUri(), s.Config.RedirectUriSeparator)
+	if ret.RedirectUri == "" && FirstUri(ret.Client.GetRedirectURI(), s.Config.RedirectUriSeparator) == ret.Client.GetRedirectURI() {
+		ret.RedirectUri = FirstUri(ret.Client.GetRedirectURI(), s.Config.RedirectUriSeparator)
 	}
 
-	if err = ValidateUriList(ret.Client.GetRedirectUri(), ret.RedirectUri, s.Config.RedirectUriSeparator); err != nil {
+	if err = ValidateUriList(ret.Client.GetRedirectURI(), ret.RedirectUri, s.Config.RedirectUriSeparator); err != nil {
 		w.SetErrorState(E_INVALID_REQUEST, "redirect URI invalid", ret.State)
 		return nil
 	}

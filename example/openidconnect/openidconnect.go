@@ -167,7 +167,7 @@ func handleAuthorization(w http.ResponseWriter, r *http.Request) {
 			idToken := IDToken{
 				Issuer:     issuer,
 				UserID:     "id-of-test-user",
-				ClientID:   ar.Client.GetId(),
+				ClientID:   ar.Client.GetID(),
 				Expiration: now.Add(time.Hour).Unix(),
 				IssuedAt:   now.Unix(),
 				Nonce:      r.URL.Query().Get("nonce"),

@@ -3,13 +3,13 @@ package osin
 // Client information
 type Client interface {
 	// Client id
-	GetId() string
+	GetID() string
 
 	// Client secret
 	GetSecret() string
 
 	// Base client uri
-	GetRedirectUri() string
+	GetRedirectURI() string
 
 	// Data to be passed to storage. Not used by the library.
 	GetUserData() interface{}
@@ -31,7 +31,7 @@ type DefaultClient struct {
 	UserData    interface{}
 }
 
-func (d *DefaultClient) GetId() string {
+func (d *DefaultClient) GetID() string {
 	return d.Id
 }
 
@@ -39,7 +39,7 @@ func (d *DefaultClient) GetSecret() string {
 	return d.Secret
 }
 
-func (d *DefaultClient) GetRedirectUri() string {
+func (d *DefaultClient) GetRedirectURI() string {
 	return d.RedirectUri
 }
 
@@ -53,8 +53,8 @@ func (d *DefaultClient) ClientSecretMatches(secret string) bool {
 }
 
 func (d *DefaultClient) CopyFrom(client Client) {
-	d.Id = client.GetId()
+	d.Id = client.GetID()
 	d.Secret = client.GetSecret()
-	d.RedirectUri = client.GetRedirectUri()
+	d.RedirectUri = client.GetRedirectURI()
 	d.UserData = client.GetUserData()
 }

@@ -154,7 +154,7 @@ func (s *Server) HandleAccessRequest(w *Response, r *http.Request) *AccessReques
 
 func (s *Server) handleAuthorizationCodeRequest(w *Response, r *http.Request) *AccessRequest {
 	// get client authentication
-	auth := getClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
 	if auth == nil {
 		return nil
 	}
@@ -288,7 +288,7 @@ func extraScopes(access_scopes, refresh_scopes string) bool {
 
 func (s *Server) handleRefreshTokenRequest(w *Response, r *http.Request) *AccessRequest {
 	// get client authentication
-	auth := getClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
 	if auth == nil {
 		return nil
 	}
@@ -361,7 +361,7 @@ func (s *Server) handleRefreshTokenRequest(w *Response, r *http.Request) *Access
 
 func (s *Server) handlePasswordRequest(w *Response, r *http.Request) *AccessRequest {
 	// get client authentication
-	auth := getClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
 	if auth == nil {
 		return nil
 	}
@@ -396,7 +396,7 @@ func (s *Server) handlePasswordRequest(w *Response, r *http.Request) *AccessRequ
 
 func (s *Server) handleClientCredentialsRequest(w *Response, r *http.Request) *AccessRequest {
 	// get client authentication
-	auth := getClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
 	if auth == nil {
 		return nil
 	}
@@ -423,7 +423,7 @@ func (s *Server) handleClientCredentialsRequest(w *Response, r *http.Request) *A
 
 func (s *Server) handleAssertionRequest(w *Response, r *http.Request) *AccessRequest {
 	// get client authentication
-	auth := getClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
 	if auth == nil {
 		return nil
 	}

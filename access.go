@@ -18,6 +18,7 @@ const (
 	PASSWORD           AccessRequestType = "password"
 	CLIENT_CREDENTIALS AccessRequestType = "client_credentials"
 	ASSERTION          AccessRequestType = "assertion"
+	ANONYMOUS          AccessRequestType = "anonymous"
 	IMPLICIT           AccessRequestType = "__implicit"
 )
 

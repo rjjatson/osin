@@ -146,6 +146,8 @@ func (s *Server) HandleAccessRequest(w *Response, r *http.Request) *AccessReques
 			return s.handleClientCredentialsRequest(w, r)
 		case ASSERTION:
 			return s.handleAssertionRequest(w, r)
+		case ANONYMOUS:
+			return s.handleAnonymousRequest(w,r)
 		}
 	}
 
@@ -382,6 +384,35 @@ func (s *Server) handlePasswordRequest(w *Response, r *http.Request) *AccessRequ
 	if ret.Username == "" || ret.Password == "" {
 		w.SetError(E_INVALID_GRANT, "")
 		return nil
+	}
+
+	// must have a valid client
+	if ret.Client = getClient(auth, w.Storage, w); ret.Client == nil {
+		return nil
+	}
+
+	// set redirect uri
+	ret.RedirectUri = FirstUri(ret.Client.GetRedirectURI(), s.Config.RedirectUriSeparator)
+
+	return ret
+}
+
+
+func (s *Server) handleAnonymousRequest(w *Response, r *http.Request) *AccessRequest {
+	// get client authentication
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	if auth == nil {
+		return nil
+	}
+
+	// generate access token
+	ret := &AccessRequest{
+		Type:            ANONYMOUS,
+		Username:        r.Form.Get("user_id"),
+		Scope:           r.Form.Get("scope"),
+		GenerateRefresh: true,
+		Expiration:      s.Config.AccessExpiration,
+		HttpRequest:     r,
 	}
 
 	// must have a valid client

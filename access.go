@@ -19,6 +19,8 @@ const (
 	CLIENT_CREDENTIALS AccessRequestType = "client_credentials"
 	ASSERTION          AccessRequestType = "assertion"
 	ANONYMOUS          AccessRequestType = "anonymous"
+	DEVICE             AccessRequestType = "device"
+	PLATFORM           AccessRequestType = "platform"
 	IMPLICIT           AccessRequestType = "__implicit"
 )
 
@@ -147,7 +149,11 @@ func (s *Server) HandleAccessRequest(w *Response, r *http.Request) *AccessReques
 		case ASSERTION:
 			return s.handleAssertionRequest(w, r)
 		case ANONYMOUS:
-			return s.handleAnonymousRequest(w,r)
+			return s.handleAnonymousRequest(w, r)
+		case DEVICE:
+			return s.handleDeviceRequest(w, r)
+		case PLATFORM:
+			return s.handlePlatformRequest(w, r)
 		}
 	}
 
@@ -397,7 +403,6 @@ func (s *Server) handlePasswordRequest(w *Response, r *http.Request) *AccessRequ
 	return ret
 }
 
-
 func (s *Server) handleAnonymousRequest(w *Response, r *http.Request) *AccessRequest {
 	// get client authentication
 	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
@@ -409,6 +414,62 @@ func (s *Server) handleAnonymousRequest(w *Response, r *http.Request) *AccessReq
 	ret := &AccessRequest{
 		Type:            ANONYMOUS,
 		Username:        r.Form.Get("user_id"),
+		Scope:           r.Form.Get("scope"),
+		GenerateRefresh: true,
+		Expiration:      s.Config.AccessExpiration,
+		HttpRequest:     r,
+	}
+
+	// must have a valid client
+	if ret.Client = getClient(auth, w.Storage, w); ret.Client == nil {
+		return nil
+	}
+
+	// set redirect uri
+	ret.RedirectUri = FirstUri(ret.Client.GetRedirectURI(), s.Config.RedirectUriSeparator)
+
+	return ret
+}
+
+func (s *Server) handleDeviceRequest(w *Response, r *http.Request) *AccessRequest {
+	// get client authentication
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	if auth == nil {
+		return nil
+	}
+
+	// generate access token
+	ret := &AccessRequest{
+		Type:            DEVICE,
+		Password:        r.Form.Get("device_id"),
+		Scope:           r.Form.Get("scope"),
+		GenerateRefresh: true,
+		Expiration:      s.Config.AccessExpiration,
+		HttpRequest:     r,
+	}
+
+	// must have a valid client
+	if ret.Client = getClient(auth, w.Storage, w); ret.Client == nil {
+		return nil
+	}
+
+	// set redirect uri
+	ret.RedirectUri = FirstUri(ret.Client.GetRedirectURI(), s.Config.RedirectUriSeparator)
+
+	return ret
+}
+
+func (s *Server) handlePlatformRequest(w *Response, r *http.Request) *AccessRequest {
+	// get client authentication
+	auth := GetClientAuth(w, r, s.Config.AllowClientSecretInParams)
+	if auth == nil {
+		return nil
+	}
+
+	// generate access token
+	ret := &AccessRequest{
+		Type:            PLATFORM,
+		Password:        r.Form.Get("platform_token"),
 		Scope:           r.Form.Get("scope"),
 		GenerateRefresh: true,
 		Expiration:      s.Config.AccessExpiration,

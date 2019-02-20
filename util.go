@@ -50,6 +50,9 @@ func CheckBasicAuth(r *http.Request) (*BasicAuth, error) {
 	if len(pair) != 2 {
 		return nil, errors.New("Invalid authorization message")
 	}
+	if pair[0] == "" {
+		return nil, errors.New("Invalid authorization message")
+	}
 
 	return &BasicAuth{Username: pair[0], Password: pair[1]}, nil
 }

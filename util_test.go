@@ -8,6 +8,7 @@ import (
 
 const (
 	badAuthValue        = "Digest XHHHHHHH"
+	blankAuthValue      = "Basic Og=="
 	goodAuthValue       = "Basic dGVzdDp0ZXN0"
 	goodBearerAuthValue = "Bearer BGFVTDUJDp0ZXN0"
 )
@@ -25,6 +26,14 @@ func TestBasicAuth(t *testing.T) {
 	b, err := CheckBasicAuth(r)
 	if b != nil || err == nil {
 		t.Errorf("Validated invalid auth")
+		return
+	}
+
+	// with blank auth header
+	r.Header.Set("Authorization", blankAuthValue)
+	b, err = CheckBasicAuth(r)
+	if b != nil || err == nil {
+		t.Errorf("Validated blank auth")
 		return
 	}
 
@@ -53,6 +62,8 @@ func TestGetClientAuth(t *testing.T) {
 	headerBadAuth.Set("Authorization", badAuthValue)
 	headerOKAuth := make(http.Header)
 	headerOKAuth.Set("Authorization", goodAuthValue)
+	headerBlankAuth := make(http.Header)
+	headerBlankAuth.Set("Authorization", blankAuthValue)
 
 	var tests = []struct {
 		header           http.Header
@@ -73,6 +84,13 @@ func TestGetClientAuth(t *testing.T) {
 		{headerBadAuth, urlWithEmptySecret, false, false},
 		{headerBadAuth, urlNoSecret, true, false},
 		{headerBadAuth, urlNoSecret, false, false},
+
+		{headerBlankAuth, urlWithSecret, true, true},
+		{headerBlankAuth, urlWithSecret, false, false},
+		{headerBlankAuth, urlWithEmptySecret, true, true},
+		{headerBlankAuth, urlWithEmptySecret, false, false},
+		{headerBlankAuth, urlNoSecret, true, false},
+		{headerBlankAuth, urlNoSecret, false, false},
 
 		{headerOKAuth, urlWithSecret, true, true},
 		{headerOKAuth, urlWithSecret, false, true},

@@ -23,6 +23,11 @@ type ClientSecretMatcher interface {
 	ClientSecretMatches(secret string) bool
 }
 
+type ClientIDMatcher interface {
+	// ClientIDMatches returns true if the given ID matches
+	ClientIDMatches(id string) bool
+}
+
 // DefaultClient stores all data in struct variables
 type DefaultClient struct {
 	Id          string

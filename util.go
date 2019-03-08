@@ -31,6 +31,16 @@ func CheckClientSecret(client Client, secret string) bool {
 	}
 }
 
+// CheckClientID determines whether the given id matches a client ID.
+func CheckClientID(client Client, id string) bool {
+	switch client := client.(type) {
+	case ClientIDMatcher:
+		return client.ClientIDMatches(id)
+	default:
+		return client.GetID() == id
+	}
+}
+
 // Return authorization header data
 func CheckBasicAuth(r *http.Request) (*BasicAuth, error) {
 	if r.Header.Get("Authorization") == "" {
